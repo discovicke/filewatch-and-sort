@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Settings>
+    <Log>log.txt</Log>
+
+    <Directory>
+        <Name>Bilder</Name>
+        <Input>/Users/lohappa/Downloads</Input>
+        <Output>/Users/lohappa/Documents</Output>
+        <Type>.jpg</Type>
+        <Type>.jpeg</Type>
+        <Type>.png</Type>
+    </Directory>
+</Settings>
