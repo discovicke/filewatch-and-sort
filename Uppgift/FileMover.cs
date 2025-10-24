@@ -3,12 +3,12 @@ namespace Uppgift;
 
 public class FileMover
 {
-    private void HanteraNyFil(string fullPath, DirectorySetting setting)
+    public void HandleFiles(string fullPath, DirectorySetting setting)
     {
         string ext = Path.GetExtension(fullPath).ToLower();
 
         if (!setting.Types.Contains(ext))
-            return; // ignorera filer som inte matchar
+            return;
 
         string fileName = Path.GetFileName(fullPath);
         string destPath = Path.Combine(setting.Output, fileName);
