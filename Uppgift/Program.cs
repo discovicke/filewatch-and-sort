@@ -22,9 +22,9 @@ public class Program
       
         var logReader = File.ReadAllText(settings.LogPath);
         Console.WriteLine(logReader);
-
-        Console.ReadKey();
-      
+        
+        Task.Delay(Timeout.Infinite).Wait();
+        
         return 0;
     }
 }
