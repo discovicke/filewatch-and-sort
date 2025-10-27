@@ -73,24 +73,60 @@ public static class ConfigValidator
 
     private static bool HasValidDirectories(XElement settings)
     {
-        var directoryElement = settings.Element("Directory");
-        if (directoryElement == null)
-            return false;
+        try
+        {
+            var directoryElement = settings.Element("Directory");
+            if (directoryElement == null)
+            {
+                Console.Error.WriteLine("[Fel] <Directory>-element saknas i Inställningar.xml");
+                return false;
+            }
 
-        string logFile = settings.Element("Log")?.Value ?? "log.txt";
-        // Normaliserar filsökvägen eftersom Steve Jobs gjorde ett designerfel för 20 år sen :)
-        logFile = logFile
-            .Replace('\\', Path.DirectorySeparatorChar)
-            .Replace('/', Path.DirectorySeparatorChar);
-        string? logDirectory = Path.GetDirectoryName(logFile);
-        
-        if (!string.IsNullOrEmpty(logDirectory) && !System.IO.Directory.Exists(logDirectory))
-            return false;
-        
-        if (!File.Exists(logFile))
-            return false;
+            string input = directoryElement.Element("Input")?.Value ?? "";
+            string output = directoryElement.Element("Output")?.Value ?? "";
+            string logFile = settings.Element("Log")?.Value ?? "log.txt";
+            logFile = logFile.Replace('\\', Path.DirectorySeparatorChar);
 
-        return true;
+            string? logDirectory = Path.GetDirectoryName(logFile);
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.Error.WriteLine("[Fel] Input-värdet saknas i konfigurationsfilen.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(output))
+            {
+                Console.Error.WriteLine("[Fel] Output-värdet saknas i konfigurationsfilen.");
+                return false;
+            }
+
+            if (!Directory.Exists(input))
+            {
+                Console.Error.WriteLine($"[Fel] Input-mapp finns inte: {input}");
+                return false;
+            }
+
+            if (!Directory.Exists(output))
+            {
+                Console.Error.WriteLine($"[Fel] Output-mapp finns inte: {output}");
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(logDirectory) && !Directory.Exists(logDirectory))
+            {
+                Console.Error.WriteLine($"[Fel] Loggmapp finns inte: {logDirectory}");
+                return false;
+            }
+
+            Console.Error.WriteLine("[OK] Alla mappar och inställningar ser giltiga ut.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[Undantag] {ex.Message}");
+            return false;
+        }
     }
 
 }

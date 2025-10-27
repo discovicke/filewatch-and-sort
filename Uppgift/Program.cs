@@ -25,7 +25,8 @@ public class Program
         var logReader = File.ReadAllText(settings.LogPath);
         Console.WriteLine(logReader);
 
-        Task.Delay(Timeout.Infinite).Wait();
+        Console.WriteLine("Bevakning aktiv i 5 sekunder...");
+        Thread.Sleep(5000);
         
         return 0;
     }
