@@ -52,9 +52,9 @@ public static class ConfigValidator
         if (directory == null)
             return false;
 
-        var name = directory.Element("Name")?.Value;
-        var input = directory.Element("Input")?.Value;
-        var output = directory.Element("Output")?.Value;
+        var name = directory.Element("Name")?.Value ?? string.Empty;
+        var input = directory.Element("Input")?.Value ?? string.Empty;
+        var output = directory.Element("Output")?.Value ?? string.Empty;
         var types = directory.Elements("Type").ToList();
 
         if (string.IsNullOrWhiteSpace(log) ||
@@ -63,26 +63,29 @@ public static class ConfigValidator
             string.IsNullOrWhiteSpace(output) ||
             !types.Any())
             return false;
+        
+        if (!Directory.Exists(input) || !Directory.Exists(output))
+            return false;
 
         return true;
     }
 
     private static bool HasValidDirectories(XElement settings)
     {
-        var directory = settings.Element("Directory");
-        if (directory == null) return false;
-
-        string input = directory.Element("Input")?.Value ?? "";
-        string output = directory.Element("Output")?.Value ?? "";
-        string log = settings.Element("Log")?.Value ?? "";
-
-        if (!Directory.Exists(input) || !Directory.Exists(output))
+        var directoryElement = settings.Element("Directory");
+        if (directoryElement == null)
             return false;
+        
+        string logPath = settings.Element("Log")?.Value ?? "log.txt";
 
-        string? logDir = Path.GetDirectoryName(log);
-        if (!string.IsNullOrEmpty(logDir) && !Directory.Exists(logDir))
+        string? logDirectory = Path.GetFullPath(logPath);
+        if (!string.IsNullOrEmpty(logDirectory) && !Directory.Exists(logPath))
+            return false;
+        
+        if (!File.Exists(logPath))
             return false;
 
         return true;
     }
+
 }
