@@ -79,7 +79,8 @@ public static class ConfigValidator
 
         string logFile = settings.Element("Log")?.Value ?? "log.txt";
         // Normaliserar filsökvägen eftersom Steve Jobs gjorde ett designerfel för 20 år sen :)
-        logFile = logFile.Replace('\\', Path.DirectorySeparatorChar)
+        logFile = logFile
+            .Replace('\\', Path.DirectorySeparatorChar)
             .Replace('/', Path.DirectorySeparatorChar);
         string? logDirectory = Path.GetDirectoryName(logFile);
         

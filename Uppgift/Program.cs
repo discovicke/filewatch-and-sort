@@ -15,15 +15,17 @@ public class Program
         var mover = new FileMover();
         
         watcher.EnableRaisingEvents = true;
-        watcher.Created += (sender, e) => 
-            mover.HandleFiles(e.FullPath, dir).GetAwaiter().GetResult();
+        watcher.Created += async (sender, e) =>
+        {
+            await mover.HandleFiles(e.FullPath, dir);
+        };
 
         Console.WriteLine($"Bevakar {dir.Name}: {dir.Input}");
       
         var logReader = File.ReadAllText(settings.LogPath);
         Console.WriteLine(logReader);
 
-        Console.ReadKey();
+        Task.Delay(Timeout.Infinite).Wait();
         
         return 0;
     }

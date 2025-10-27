@@ -14,7 +14,7 @@ public class FileMover
         string destPath = Path.Combine(setting.Output, fileName);
 
         int maxAttempts = 10;
-        int delayMs = 50;
+        int delayMs = 300;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
