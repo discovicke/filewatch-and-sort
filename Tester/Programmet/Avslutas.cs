@@ -10,7 +10,7 @@ public sealed class Avslutas
     {
         CreateDirs();
         var code = Runner.Run(null);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -20,7 +20,7 @@ public sealed class Avslutas
         CreateDirs();
         var settings = GenerateXml(XMLData.Settings, ".jpg", ".png");
         var code = Runner.Run(settings, 10);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -30,7 +30,7 @@ public sealed class Avslutas
         CreateDirs();
         var settings = GenerateXml(XMLData.Log, ".jpg", ".png");
         var code = Runner.Run(settings, 10);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -40,7 +40,7 @@ public sealed class Avslutas
         CreateDirs();
         var settings = GenerateXml(XMLData.Directory, ".jpg", ".png");
         var code = Runner.Run(settings, 10);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -50,7 +50,7 @@ public sealed class Avslutas
         CreateDirs();
         var settings = GenerateXml(XMLData.Name, ".jpg", ".png");
         var code = Runner.Run(settings, 10);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -60,7 +60,7 @@ public sealed class Avslutas
         CreateDirs();
         var settings = GenerateXml(XMLData.Input, ".jpg", ".png");
         var code = Runner.Run(settings, 10);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -70,7 +70,7 @@ public sealed class Avslutas
         CreateDirs();
         var settings = GenerateXml(XMLData.Output, ".jpg", ".png");
         var code = Runner.Run(settings, 10);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -80,7 +80,7 @@ public sealed class Avslutas
         CreateDirs();
         var settings = GenerateXml(XMLData.Type);
         var code = Runner.Run(settings, 10);
-        if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+        if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         RemoveDirs();
     }
 
@@ -92,7 +92,7 @@ public sealed class Avslutas
         {
             var settings = GenerateXml(XMLData.None, ".jpg", ".png").Replace(">Downloads<", $">{file}<");
             var code = Runner.Run(settings, 10);
-            if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+            if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         }
         RemoveDirs();
     }
@@ -105,7 +105,7 @@ public sealed class Avslutas
         {
             var settings = GenerateXml(XMLData.None, ".jpg", ".png").Replace(">Downloads/Bilder<", $">{file}<");
             var code = Runner.Run(settings, 10);
-            if (code != -1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
+            if (code != 1) Assert.Fail("\nProgrammet borde avslutas med kod 1");
         }
         RemoveDirs();
     }
@@ -118,7 +118,7 @@ public sealed class Avslutas
         {
             var settings = GenerateXml(XMLData.None, ".jpg", ".png").Replace(">log.txt<", $">{file}<");
             var code = Runner.Run(settings, 10);
-            if (code != -1) Assert.Fail($"\nProgrammet borde avslutas med kod 1 för logfil \"{file}\"");
+            if (code != 1) Assert.Fail($"\nProgrammet borde avslutas med kod 1 för logfil \"{file}\"");
         }
         RemoveDirs();
     }
