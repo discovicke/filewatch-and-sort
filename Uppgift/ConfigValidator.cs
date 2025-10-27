@@ -8,6 +8,7 @@ public static class ConfigValidator
 {
     public static bool IsValidConfigFile(string xmlPath)
     {
+        System.IO.Path.GetFullPath(xmlPath);
         if (!FilFinns(xmlPath))
             return false;
 
@@ -75,14 +76,17 @@ public static class ConfigValidator
         var directoryElement = settings.Element("Directory");
         if (directoryElement == null)
             return false;
-        
-        string logPath = settings.Element("Log")?.Value ?? "log.txt";
 
-        string? logDirectory = Path.GetFullPath(logPath);
-        if (!string.IsNullOrEmpty(logDirectory) && !Directory.Exists(logPath))
+        string logFile = settings.Element("Log")?.Value ?? "log.txt";
+        // Normaliserar filsökvägen eftersom Steve Jobs gjorde ett designerfel för 20 år sen :)
+        logFile = logFile.Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
+        string? logDirectory = Path.GetDirectoryName(logFile);
+        
+        if (!string.IsNullOrEmpty(logDirectory) && !System.IO.Directory.Exists(logDirectory))
             return false;
         
-        if (!File.Exists(logPath))
+        if (!File.Exists(logFile))
             return false;
 
         return true;
