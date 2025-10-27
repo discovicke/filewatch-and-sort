@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Settings>
-    <Log>tmp\stinky\socks\README.md</Log>
+    <Log>log.txt</Log>
 
     <Directory>
         <Name>Bilder</Name>
