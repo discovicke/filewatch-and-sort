@@ -1,5 +1,6 @@
-﻿using Uppgift.Models;
-using Uppgift;
+﻿using Uppgift;
+using Uppgift.Models;
+using Uppgift.Config;
 
 public class Program
 {
@@ -8,24 +9,20 @@ public class Program
         if (!ConfigValidator.IsValidConfigFile("Inställningar.xml"))
             return 1;
 
-        Settings settings = SettingsReader.Load();
-        var dir = settings.Directories[0];
+        var settings = SettingsReader.Load();
+        var directoryConfig = settings.Directories[0];
       
-        var watcher = new FileSystemWatcher(dir.Input);
-        var mover = new FileMover();
+        Logger.LogPath = Path.GetFullPath(settings.LogPath);
+
+        var fileWatcher = new FileSystemWatcher(directoryConfig.Input)
+        { EnableRaisingEvents = true };
         
-        watcher.EnableRaisingEvents = true;
-        watcher.Created += async (sender, e) =>
-        {
-            await mover.HandleFiles(e.FullPath, dir);
-        };
-
-        Console.WriteLine($"Bevakar {dir.Name}: {dir.Input}");
-      
-        var logReader = File.ReadAllText(settings.LogPath);
-        Console.WriteLine(logReader);
-
-        Console.WriteLine("Bevakning aktiv i 5 sekunder...");
+        var fileMover = new FileMover();
+        fileWatcher.EnableRaisingEvents = true;
+        
+        fileWatcher.Created += async (sender, e) =>
+        { await fileMover.HandleFiles(e.FullPath, directoryConfig); };
+        
         Thread.Sleep(5000);
         
         return 0;
