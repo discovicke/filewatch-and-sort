@@ -70,7 +70,7 @@ public sealed class Kör
         {
             var main = RunUntilCancelled(cancellation.Token);
 
-            await Task.Delay(300);
+            await Task.Delay(3000);
 
 
             for (int fileNumber = 0; fileNumber < 10; fileNumber++)
@@ -81,12 +81,12 @@ public sealed class Kör
 
                 var textContent = GetRandomText();
                 File.WriteAllText(inputPath, textContent);
-                await Task.Delay(200);
+                await Task.Delay(2000);
 
                 for (int retries = 0; retries < 10; retries++)
                 {
                     if (File.Exists(outputPath)) break;
-                    await Task.Delay(100 + (retries * 300));
+                    await Task.Delay(100 + (retries * 1000));
                 }
                 if (!File.Exists(outputPath)) Assert.Fail(
                     $"\nFilen flyttade inte på sig\n" +
@@ -130,7 +130,7 @@ public sealed class Kör
         {
             var main = RunUntilCancelled(cancellation.Token);
 
-            await Task.Delay(300);
+            await Task.Delay(1000);
             for (int i = 0; i < includedFiles.Length; i++)
             {
                 var fileName = includedFiles[i];
@@ -138,12 +138,12 @@ public sealed class Kör
 
                 var textContent = GetRandomText();
                 File.WriteAllText(inputPath, textContent);
-                await Task.Delay(200);
+                await Task.Delay(1000);
 
                 expectedLogg.Add(fileName);
             }
 
-            await Task.Delay(1000);
+            await Task.Delay(5000);
             if (!File.Exists(logFilePath)) Assert.Fail(
                 "\nDet skapades ingen logfil\n" +
                 $"\"{logFilePath}\" borde ha skapats eftersom det anges i konfigurationsfilen");

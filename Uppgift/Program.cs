@@ -22,8 +22,8 @@ public class Program
       
         var logReader = File.ReadAllText(settings.LogPath);
         Console.WriteLine(logReader);
-        
-        Task.Delay(Timeout.Infinite).Wait();
+
+        Console.ReadKey();
         
         return 0;
     }

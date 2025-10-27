@@ -28,6 +28,7 @@ public class FileMover
 
                 File.Move(fullPath, destPath, true);
                 Logger.Log($"{fileName} flyttades till {setting.Name}");
+                Console.WriteLine($"{fileName} flyttades till {setting.Name}");
                 return;
             }
             catch (IOException)
