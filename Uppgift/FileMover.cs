@@ -4,7 +4,7 @@ namespace Uppgift;
 
 public class FileMover
 {
-    public void HandleFiles(string fullPath, DirectorySetting setting)
+    public async Task HandleFiles(string fullPath, DirectorySetting setting)
     {
         string ext = Path.GetExtension(fullPath).ToLower();
         if (!setting.Types.Contains(ext))
@@ -13,8 +13,8 @@ public class FileMover
         string fileName = Path.GetFileName(fullPath);
         string destPath = Path.Combine(setting.Output, fileName);
 
-        const int maxAttempts = 10;
-        const int delayMs = 500;
+        int maxAttempts = 10;
+        int delayMs = 50;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
@@ -22,27 +22,20 @@ public class FileMover
             {
                 if (!File.Exists(fullPath))
                 {
-                    Thread.Sleep(delayMs);
+                    await Task.Delay(delayMs);
                     continue;
                 }
 
                 File.Move(fullPath, destPath, true);
-
                 Logger.Log($"{fileName} flyttades till {setting.Name}");
-                return;
-            }
-            catch (FileNotFoundException)
-            {
                 return;
             }
             catch (IOException)
             {
-                Thread.Sleep(delayMs);
+                await Task.Delay(delayMs);
             }
-            catch (UnauthorizedAccessException)
-            {
-                Thread.Sleep(delayMs); ;
-            }
+            
+            Logger.Log($"Kunde inte flytta {fileName} efter {maxAttempts} försök.");
         }
     }
 }
