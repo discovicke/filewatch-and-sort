@@ -4,34 +4,44 @@ namespace Uppgift;
 
 public class FileMover
 {
-    public async Task HandleFiles(string fullPath, DirectorySetting setting)
+    public async Task HandleFiles(string sourcePath, DirectorySetting setting)
     {
-        string ext = Path.GetExtension(fullPath).ToLower();
+        string ext = Path.GetExtension(sourcePath).ToLowerInvariant();
         if (!setting.Types.Contains(ext))
             return;
 
-        string fileName = Path.GetFileName(fullPath);
-        string destPath = Path.Combine(setting.Output, fileName);
+        var fileName = Path.GetFileName(sourcePath);
+        var destPath = Path.Combine(setting.Output, fileName);
 
-        int maxAttempts = 10;
-        int delayMs = 300;
+        var maxAttempts = 10;
+        var delayMs = 300;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
             try
             {
-                if (!File.Exists(fullPath))
+                if (!File.Exists(sourcePath))
                 {
                     await Task.Delay(delayMs);
                     continue;
                 }
 
-                File.Move(fullPath, destPath, true);
+                File.Move(sourcePath, destPath, true);
                 Logger.Log($"{fileName} flyttades till {setting.Name}");
-                Console.WriteLine($"{fileName} flyttades till {setting.Name}");
                 return;
             }
+            
+            catch (FileNotFoundException)
+            {
+                return;
+            }
+            
             catch (IOException)
+            {
+                await Task.Delay(delayMs);
+            }   
+            
+            catch (UnauthorizedAccessException)
             {
                 await Task.Delay(delayMs);
             }
