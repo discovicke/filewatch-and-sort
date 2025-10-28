@@ -25,11 +25,20 @@ public class FileMover
                     await Task.Delay(delayMs);
                     continue;
                 }
+                
+                using (var stream = File.Open(sourcePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    
+                }
 
                 File.Move(sourcePath, destPath, true);
 
                 Logger.Log($"[{DateTime.Now}]: {fileName} flyttades till {setting.Name}");
                 Console.WriteLine($"[{DateTime.Now}]: {fileName} flyttades till {setting.Name}");
+                return;
+            }
+            catch (FileNotFoundException)
+            {
                 return;
             }
             catch (IOException)
@@ -40,7 +49,6 @@ public class FileMover
             {
                 await Task.Delay(delayMs);
             }
-            await Task.Delay(delayMs);
         }
         
         //Logger.Log($"[{DateTime.Now:HH:mm:ss}] Kunde inte flytta {fileName} efter {maxAttempts} försök.");

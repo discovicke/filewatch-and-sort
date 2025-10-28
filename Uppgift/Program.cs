@@ -24,11 +24,14 @@ public class Program
         {
             _ = Task.Run(async () =>
             {
+                await Task.Delay(200);
                 await fileMover.HandleFiles(e.FullPath, directoryConfig);
             });
         };
         
-        Task.Delay(2000).Wait();
+        Thread.Sleep(5000);
+        
+        Task.Delay(Timeout.Infinite).Wait();
         
         return 0;
     }

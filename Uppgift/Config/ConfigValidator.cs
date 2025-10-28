@@ -25,9 +25,12 @@ public static class ConfigValidator
     {
         string logPath = settings.Element("Log")?.Value ?? string.Empty;
         logPath = NormalizePath(logPath);
-        if (string.IsNullOrWhiteSpace(logPath) || !File.Exists(logPath))
+        if (string.IsNullOrWhiteSpace(logPath))
             return false;
-
+        var logDir = Path.GetDirectoryName(Path.GetFullPath(logPath));
+        if (string.IsNullOrEmpty(logDir) || !Directory.Exists(logDir))
+            return false;
+        
         var dir = settings.Element("Directory");
         if (dir == null) 
             return false;
