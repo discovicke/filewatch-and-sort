@@ -32,7 +32,6 @@ public class FileMover
                 }
 
                 File.Move(sourcePath, destPath, true);
-
                 Logger.Log($"[{DateTime.Now}]: {fileName} flyttades till {setting.Name}");
                 Console.WriteLine($"[{DateTime.Now}]: {fileName} flyttades till {setting.Name}");
                 return;
@@ -50,8 +49,5 @@ public class FileMover
                 await Task.Delay(delayMs);
             }
         }
-        
-        //Logger.Log($"[{DateTime.Now:HH:mm:ss}] Kunde inte flytta {fileName} efter {maxAttempts} försök.");
-        //Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Kunde inte flytta {fileName} efter {maxAttempts} försök.");
     }
 }

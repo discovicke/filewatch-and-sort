@@ -10,13 +10,23 @@ public class Program
             return 1;
 
         var settings = SettingsReader.Load();
-        var directoryConfig = settings.Directories[0];
+        var directoryConfig = new DirectorySetting
+        {
+            Name = settings.Directories.First().Name,
+            Input = settings.Directories.First().Input,
+            Output = settings.Directories.First().Output,
+            Types = settings.Directories
+                .SelectMany(d => d.Types)
+                .Where(t => !string.IsNullOrWhiteSpace(t))
+                .Select(t => t.ToLowerInvariant())
+                .Distinct()
+                .ToList()
+        };        
 
         using var fileWatcher = new FileSystemWatcher(directoryConfig.Input)
         {
             EnableRaisingEvents = true
         };
-
         
         var fileMover = new FileMover();
         
