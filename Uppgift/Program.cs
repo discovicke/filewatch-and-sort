@@ -28,7 +28,7 @@ public class Program
             });
         };
         
-        Task.Delay(Timeout.Infinite).Wait();
+        Task.Delay(2000).Wait();
         
         return 0;
     }
