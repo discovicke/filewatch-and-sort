@@ -130,7 +130,7 @@ public sealed class Kör
         {
             var main = RunUntilCancelled(cancellation.Token);
 
-            await Task.Delay(1000);
+            await Task.Delay(500);
             for (int i = 0; i < includedFiles.Length; i++)
             {
                 var fileName = includedFiles[i];
@@ -143,7 +143,7 @@ public sealed class Kör
                 expectedLogg.Add(fileName);
             }
 
-            await Task.Delay(5000);
+            await Task.Delay(1000);
             if (!File.Exists(logFilePath)) Assert.Fail(
                 "\nDet skapades ingen logfil\n" +
                 $"\"{logFilePath}\" borde ha skapats eftersom det anges i konfigurationsfilen");
