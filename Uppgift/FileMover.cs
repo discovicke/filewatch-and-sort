@@ -40,6 +40,7 @@ public class FileMover
             {
                 await Task.Delay(delayMs);
             }
+            await Task.Delay(delayMs);
         }
         
         //Logger.Log($"[{DateTime.Now:HH:mm:ss}] Kunde inte flytta {fileName} efter {maxAttempts} försök.");
