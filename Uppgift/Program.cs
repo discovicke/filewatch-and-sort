@@ -18,7 +18,6 @@ public class Program
         { EnableRaisingEvents = true };
         
         var fileMover = new FileMover();
-        fileWatcher.EnableRaisingEvents = true;
         
         fileWatcher.Created += async (sender, e) =>
         { await fileMover.HandleFiles(e.FullPath, directoryConfig); };
