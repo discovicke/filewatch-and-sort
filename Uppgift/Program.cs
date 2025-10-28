@@ -11,18 +11,24 @@ public class Program
 
         var settings = SettingsReader.Load();
         var directoryConfig = settings.Directories[0];
-      
-        Logger.LogPath = Path.GetFullPath(settings.LogPath);
 
-        var fileWatcher = new FileSystemWatcher(directoryConfig.Input)
-        { EnableRaisingEvents = true };
+        using var fileWatcher = new FileSystemWatcher(directoryConfig.Input)
+        {
+            EnableRaisingEvents = true
+        };
+
         
         var fileMover = new FileMover();
         
-        fileWatcher.Created += async (sender, e) =>
-        { await fileMover.HandleFiles(e.FullPath, directoryConfig); };
+        fileWatcher.Created += (sender, e) =>
+        {
+            _ = Task.Run(async () =>
+            {
+                await fileMover.HandleFiles(e.FullPath, directoryConfig);
+            });
+        };
         
-        Thread.Sleep(5000);
+        Task.Delay(Timeout.Infinite).Wait();
         
         return 0;
     }

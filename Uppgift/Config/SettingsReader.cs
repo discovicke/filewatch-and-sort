@@ -33,7 +33,7 @@ public static class SettingsReader
             settings.Directories.Add(directorySetting);
         }
 
-        Logger.LogPath = settings.LogPath;
+        Logger.LogPath = Path.GetFullPath(ConfigValidator.NormalizePath(settings.LogPath));
 
         return settings;
     }

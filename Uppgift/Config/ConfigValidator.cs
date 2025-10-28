@@ -49,7 +49,7 @@ public static class ConfigValidator
         return Directory.Exists(input) && Directory.Exists(output);
     }
 
-    private static string NormalizePath(string path)
+    public static string NormalizePath(string path)
         => path
             .Replace('\\', Path.DirectorySeparatorChar)
             .Replace('/', Path.DirectorySeparatorChar);

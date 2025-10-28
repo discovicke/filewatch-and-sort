@@ -11,15 +11,11 @@ public static class Logger
             if (string.IsNullOrWhiteSpace(LogPath))
                 return;
 
-            var dir = Path.GetDirectoryName(LogPath);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-
-            File.AppendAllText(LogPath, textContent + "/n");
+            File.AppendAllText(LogPath, textContent + Environment.NewLine);
         }
         catch
         {
-            //Ignorerar för att hålla igång testerna
+            // Ignorera fel för att inte blockera tester
         }
     }
 }
