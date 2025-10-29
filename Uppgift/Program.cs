@@ -4,51 +4,82 @@ using Uppgift.Config;
 
 public class Program
 {
+
     public static int Main()
     {
         if (!ConfigValidator.IsValidConfigFile("Inställningar.xml"))
             return 1;
 
-        var settings = SettingsReader.Load();
-        var directoryConfig = new DirectorySetting
-        {
-            Name = settings.Directories.First().Name,
-            Input = settings.Directories.First().Input,
-            Output = settings.Directories.First().Output,
-            Types = settings.Directories
-                .SelectMany(d => d.Types)
-                .Where(t => !string.IsNullOrWhiteSpace(t))
-                .Select(t => t.ToLowerInvariant())
-                .Distinct()
-                .ToList()
-        };
-
+        var xmlSettings = SettingsReader.Load();
         var fileMover = new FileMover();
 
-        fileMover.ExistingFiles(directoryConfig).Wait();
-
-        using var fileWatcher = new FileSystemWatcher(directoryConfig.Input)
+        var validExt = new Dictionary<string, List<DirectoryRule>>();
+        foreach (var directoryConfig in xmlSettings.Directories)
         {
-            EnableRaisingEvents = true,
-            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
-            InternalBufferSize = 128 * 1024
-        };
+            fileMover
+                .ExistingFiles(directoryConfig)
+                .Wait();
 
-        fileWatcher.Created += async (sender, e) =>
-        {
-            await Task.Delay(100);
-            await fileMover.HandleFiles(e.FullPath, directoryConfig);
-        };
+            foreach (var configExt in directoryConfig.Types)
+            {
+                if (!validExt.ContainsKey(configExt))
+                    validExt[configExt] = new List<DirectoryRule>();
+                validExt[configExt].Add(directoryConfig);
+            }
+        }
 
-        fileWatcher.Changed += async (sender, e) =>
+        var dirGroupedByInput = xmlSettings.Directories
+            .GroupBy(d => d.Input)
+            .ToList();
+
+        var inputWatchers = new List<FileSystemWatcher>();
+
+        foreach (var inputGroup in dirGroupedByInput)
         {
-            await Task.Delay(100);
-            await fileMover.HandleFiles(e.FullPath, directoryConfig);
-        };
-        
+            var inputWatcher = new FileSystemWatcher(inputGroup.Key)
+            {
+                EnableRaisingEvents = true,
+            };
+
+            inputWatcher.Created += async (sender, e) =>
+            {
+                await Task.Delay(100);
+                var fileExtentions = Path.GetExtension(e.FullPath)
+                    .ToLowerInvariant();
+                if (validExt
+                    .TryGetValue(fileExtentions, out var matchingDirectories))
+                {
+                    foreach (var config in matchingDirectories)
+                    {
+                        await fileMover
+                            .HandleFiles(e.FullPath, config);
+                    }
+                }
+            };
+
+            inputWatcher.Changed += async (sender, e) =>
+            {
+                await Task.Delay(100);
+                var fileExtentions = Path.GetExtension(e.FullPath)
+                    .ToLowerInvariant();
+                if (validExt
+                    .TryGetValue(fileExtentions, out var matchingDirectories))
+                {
+                    foreach (var rule in matchingDirectories)
+                    {
+                        await fileMover
+                            .HandleFiles(e.FullPath, rule);
+                    }
+                }
+            };
+            
+            inputWatchers
+                .Add(inputWatcher);
+        }
+
         Thread.Sleep(2000);
-
-        Task.Delay(Timeout.Infinite).Wait();
+        Task.Delay(Timeout.Infinite)
+            .Wait();
         return 0;
     }
 }
