@@ -4,12 +4,58 @@ using Uppgift.Config;
 
 public class Program
 {
-
+    public static List<FileSystemWatcher> inputWatchers = new();
     public static int Main()
     {
         if (!ConfigValidator.IsValidConfigFile("Inställningar.xml"))
             return 1;
 
+        StartFileMonitor();
+        StartConfigWatcher();
+
+        Thread.Sleep(2000);
+        Task.Delay(Timeout.Infinite)
+            .Wait();
+        return 0;
+    }
+    
+    public static void StartConfigWatcher()
+    {
+        var configDir = Path.GetDirectoryName(Path.GetFullPath("Inställningar.xml"))!;
+        var configWatcher = new FileSystemWatcher(configDir)
+        {
+            Filter = "Inställningar.xml",
+            EnableRaisingEvents = true
+        };
+
+        configWatcher.Changed += async (sender, e) =>
+        {
+            await Task.Delay(300); 
+            ReloadConfiguration();
+        };
+    }
+    public static void ReloadConfiguration()
+    {
+      
+
+        Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Laddar om konfiguration...");
+        
+        foreach (var watcher in inputWatchers)
+        {
+            watcher.EnableRaisingEvents = false;
+            watcher
+                .Dispose();
+        }
+        inputWatchers
+            .Clear();
+        
+        StartFileMonitor();
+
+        Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Konfiguration uppdaterad");
+        
+    }
+    public static void StartFileMonitor()
+    {
         var xmlSettings = SettingsReader.Load();
         var fileMover = new FileMover();
 
@@ -22,64 +68,54 @@ public class Program
 
             foreach (var configExt in directoryConfig.Types)
             {
-                if (!validExt.ContainsKey(configExt))
+                if (!validExt
+                        .ContainsKey(configExt))
                     validExt[configExt] = new List<DirectoryRule>();
                 validExt[configExt].Add(directoryConfig);
             }
         }
 
         var dirGroupedByInput = xmlSettings.Directories
-            .GroupBy(d => d.Input)
-            .ToList();
-
-        var inputWatchers = new List<FileSystemWatcher>();
+                                                    .GroupBy(d => d.Input)
+                                                    .ToList();
 
         foreach (var inputGroup in dirGroupedByInput)
         {
             var inputWatcher = new FileSystemWatcher(inputGroup.Key)
             {
-                EnableRaisingEvents = true,
+                EnableRaisingEvents = true
             };
 
             inputWatcher.Created += async (sender, e) =>
             {
                 await Task.Delay(100);
-                var fileExtentions = Path.GetExtension(e.FullPath)
+                var ext = Path.GetExtension(e.FullPath)
                     .ToLowerInvariant();
                 if (validExt
-                    .TryGetValue(fileExtentions, out var matchingDirectories))
+                    .TryGetValue(ext, out var configs))
                 {
-                    foreach (var config in matchingDirectories)
-                    {
+                    foreach (var config in configs)
                         await fileMover
                             .HandleFiles(e.FullPath, config);
-                    }
                 }
             };
 
             inputWatcher.Changed += async (sender, e) =>
             {
                 await Task.Delay(100);
-                var fileExtentions = Path.GetExtension(e.FullPath)
+                var ext = Path.GetExtension(e.FullPath)
                     .ToLowerInvariant();
                 if (validExt
-                    .TryGetValue(fileExtentions, out var matchingDirectories))
+                    .TryGetValue(ext, out var configs))
                 {
-                    foreach (var rule in matchingDirectories)
-                    {
+                    foreach (var config in configs)
                         await fileMover
-                            .HandleFiles(e.FullPath, rule);
-                    }
+                            .HandleFiles(e.FullPath, config);
                 }
             };
-            
-            inputWatchers
-                .Add(inputWatcher);
-        }
 
-        Thread.Sleep(2000);
-        Task.Delay(Timeout.Infinite)
-            .Wait();
-        return 0;
+            inputWatchers.
+                Add(inputWatcher);
+        }
     }
 }
