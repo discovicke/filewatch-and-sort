@@ -4,8 +4,9 @@ using Uppgift.Config;
 
 public class Program
 {
-    //Osäker på namngivelsen här? 
-    public static List<FileSystemWatcher> inputWatchers = new();//InputWatchers
+                                    // ==== Review Comments ====
+                                    //Osäker på namngivelsen här? 
+    public static List<FileSystemWatcher> inputWatchers = new();//InputWatchers eller inputWatchers?
     public static bool isReloading = false;                     //Borde det vara IsReloading eftersom den är publik?
     private static readonly object reloadLock = new object();   //...och kanske ReloadLock här eftersom den är static?
                                                                 //...eller _reloadLock för att indikera att det är ett privat fält?
@@ -58,6 +59,12 @@ public class Program
         }
         inputWatchers
             .Clear();
+        
+        if (!ConfigValidator.IsValidConfigFile("Inställningar.xml"))
+        {
+            Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Ogiltig konfiguration, behåller gamla inställningar");
+            return;
+        }
         
         StartFileMonitor();
 
@@ -125,8 +132,8 @@ public class Program
                 }
             };
 
-            inputWatchers.
-                Add(inputWatcher);
+            inputWatchers
+                .Add(inputWatcher);
         }
     }
 }
