@@ -4,7 +4,7 @@ namespace Uppgift;
 
 public class FileMover
 {
-    public async Task HandleFiles(string sourcePath, DirectorySetting setting)
+    public async Task HandleFiles(string sourcePath, DirectoryRule setting)
     {
         var ext = Path.GetExtension(sourcePath).ToLowerInvariant();
         if (!setting.Types.Contains(ext))
@@ -60,7 +60,7 @@ public class FileMover
         }
     }
     
-    public async Task ExistingFiles(DirectorySetting setting)
+    public async Task ExistingFiles(DirectoryRule setting)
     {
         if (!Directory.Exists(setting.Input))
         {

@@ -1,6 +1,6 @@
 namespace Uppgift.Models;
 
-public class DirectorySetting
+public class DirectoryRule
 {
     public string Name { get; set; } = string.Empty;
     public string Input { get; set; } = string.Empty;

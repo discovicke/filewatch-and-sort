@@ -19,7 +19,7 @@ public static class SettingsReader
 
         foreach (var directory in root.Elements("Directory"))
         {
-            var directorySetting = new DirectorySetting
+            var directorySetting = new DirectoryRule
             {
                 Name = directory.Element("Name")?.Value ?? string.Empty,
                 Input = directory.Element("Input")?.Value ?? string.Empty,
