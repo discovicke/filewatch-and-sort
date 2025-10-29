@@ -4,7 +4,12 @@ using Uppgift.Config;
 
 public class Program
 {
-    public static List<FileSystemWatcher> inputWatchers = new();
+    //Osäker på namngivelsen här? 
+    public static List<FileSystemWatcher> inputWatchers = new();//InputWatchers
+    public static bool isReloading = false;                     //Borde det vara IsReloading eftersom den är publik?
+    private static readonly object reloadLock = new object();   //...och kanske ReloadLock här eftersom den är static?
+                                                                //...eller _reloadLock för att indikera att det är ett privat fält?
+                                                                //Du får gärna svara när du rättar inlämningen så jag vet! :)
     public static int Main()
     {
         if (!ConfigValidator.IsValidConfigFile("Inställningar.xml"))
@@ -36,7 +41,12 @@ public class Program
     }
     public static void ReloadConfiguration()
     {
-      
+        lock (reloadLock)
+        {
+            if (isReloading) 
+                return;
+            isReloading = true;
+        }
 
         Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Laddar om konfiguration...");
         
@@ -53,6 +63,7 @@ public class Program
 
         Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Konfiguration uppdaterad");
         
+        isReloading = false;
     }
     public static void StartFileMonitor()
     {
