@@ -8,7 +8,8 @@ public static class ConfigValidator
 {
     public static bool IsValidConfigFile(string xmlPath)
     {
-        if (!File.Exists(xmlPath)) return false;
+        if (!File.Exists(xmlPath)) 
+            return false;
 
         var doc = XDocument.Load(xmlPath);
         if (doc == null) 
@@ -31,7 +32,8 @@ public static class ConfigValidator
         if (string.IsNullOrEmpty(logDir) || !Directory.Exists(logDir))
             return false;
         
-        var dir = settings.Element("Directory");
+        var dir = settings
+            .Element("Directory");
         if (dir == null) 
             return false;
 

@@ -5,7 +5,7 @@ using Uppgift.Config;
 public class Program
 {
                                     // ==== Review Comments ====
-                                    //Osäker på namngivelsen här? 
+                                    //Osäker på namngivelsen här?
     public static List<FileSystemWatcher> inputWatchers = new();//InputWatchers eller inputWatchers?
     public static bool isReloading = false;                     //Borde det vara IsReloading eftersom den är publik?
     private static readonly object reloadLock = new object();   //...och kanske ReloadLock här eftersom den är static?
@@ -44,33 +44,39 @@ public class Program
     {
         lock (reloadLock)
         {
-            if (isReloading) 
+            if (isReloading)
                 return;
             isReloading = true;
         }
 
-        Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Laddar om konfiguration...");
-        
-        foreach (var watcher in inputWatchers)
+        try
         {
-            watcher.EnableRaisingEvents = false;
-            watcher
-                .Dispose();
-        }
-        inputWatchers
-            .Clear();
-        
-        if (!ConfigValidator.IsValidConfigFile("Inställningar.xml"))
-        {
-            Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Ogiltig konfiguration, behåller gamla inställningar");
-            return;
-        }
-        
-        StartFileMonitor();
+            //Logger.Log($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Laddar om konfiguration...");
+            
+            foreach (var watcher in inputWatchers)
+            {
+                watcher.EnableRaisingEvents = false;
+                watcher.Dispose();
+            }
+            inputWatchers.Clear();
+            
+            if (!ConfigValidator.IsValidConfigFile("Inställningar.xml"))
+            {
+                Logger.Log($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Ogiltig konfiguration, behåller gamla inställningar");
+                return;
+            }
+            
+            StartFileMonitor();
 
-        Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Konfiguration uppdaterad");
-        
-        isReloading = false;
+            //Logger.Log($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Konfiguration uppdaterad");
+        }
+        finally
+        {
+            lock (reloadLock)
+            {
+                isReloading = false;
+            }
+        }
     }
     public static void StartFileMonitor()
     {

@@ -33,8 +33,6 @@ public static class SettingsReader
             settings.Directories.Add(directorySetting);
         }
         
-        Console.WriteLine($"Types: {string.Join(", ", settings.Directories.SelectMany(d => d.Types))}");
-        Console.WriteLine($"LogPath: {settings.LogPath}");
         Logger.LogPath = Path.GetFullPath(ConfigValidator.NormalizePath(settings.LogPath));
 
         return settings;
