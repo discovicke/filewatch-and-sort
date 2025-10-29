@@ -11,7 +11,7 @@ public static class Logger
             if (string.IsNullOrWhiteSpace(LogPath))
                 return;
 
-            File.AppendAllText(LogPath, textContent + Environment.NewLine);
+            File.AppendAllTextAsync(LogPath, textContent + Environment.NewLine);
         }
         catch
         {

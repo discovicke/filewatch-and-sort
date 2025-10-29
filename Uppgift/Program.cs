@@ -24,31 +24,31 @@ public class Program
         };
 
         var fileMover = new FileMover();
-        
+
+        fileMover.ExistingFiles(directoryConfig).Wait();
 
         using var fileWatcher = new FileSystemWatcher(directoryConfig.Input)
         {
             EnableRaisingEvents = true,
-            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
+            InternalBufferSize = 128 * 1024
         };
-        
-        fileWatcher.Created += (sender, e) =>
-        {
-            _ = Task.Run(async () =>
-            {
-                await Task.Delay(200);
-                await fileMover.HandleFiles(e.FullPath, directoryConfig);
-            });
-        };
-        
-        //_ = Task.Run(async () => await fileMover.ExistingFiles(directoryConfig));
 
-    
-        Thread.Sleep(60000);  // 60 sekunder för att hinna med alla 50 filer
+        fileWatcher.Created += async (sender, e) =>
+        {
+            await Task.Delay(100);
+            await fileMover.HandleFiles(e.FullPath, directoryConfig);
+        };
+
+        fileWatcher.Changed += async (sender, e) =>
+        {
+            await Task.Delay(100);
+            await fileMover.HandleFiles(e.FullPath, directoryConfig);
+        };
+        
+        Thread.Sleep(2000);
 
         Task.Delay(Timeout.Infinite).Wait();
-        
-        
         return 0;
     }
 }
