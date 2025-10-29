@@ -3,9 +3,9 @@
     <Log>log.txt</Log>
 
     <Directory>
-        <Name>Dokument</Name>
+        <Name>Bilder</Name>
         <Input>/Users/lohappa/Downloads</Input>
-        <Output>/Users/lohappa/Documents</Output>
+        <Output>/Users/lohappa/Pictures</Output>
         <Type>.jpg</Type>
         <Type>.jpeg</Type>
         <Type>.png</Type>

@@ -21,14 +21,16 @@ public class Program
                 .Select(t => t.ToLowerInvariant())
                 .Distinct()
                 .ToList()
-        };        
+        };
+
+        var fileMover = new FileMover();
+        
 
         using var fileWatcher = new FileSystemWatcher(directoryConfig.Input)
         {
-            EnableRaisingEvents = true
+            EnableRaisingEvents = true,
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
         };
-        
-        var fileMover = new FileMover();
         
         fileWatcher.Created += (sender, e) =>
         {
@@ -39,9 +41,13 @@ public class Program
             });
         };
         
-        Thread.Sleep(5000);
-        
+        //_ = Task.Run(async () => await fileMover.ExistingFiles(directoryConfig));
+
+    
+        Thread.Sleep(60000);  // 60 sekunder för att hinna med alla 50 filer
+
         Task.Delay(Timeout.Infinite).Wait();
+        
         
         return 0;
     }

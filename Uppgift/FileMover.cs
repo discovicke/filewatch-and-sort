@@ -14,7 +14,7 @@ public class FileMover
         var destPath = Path.Combine(setting.Output, fileName);
 
         const int maxAttempts = 10;
-        const int delayMs = 400;
+        const int delayMs = 300;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
@@ -32,7 +32,7 @@ public class FileMover
                 }
 
                 File.Move(sourcePath, destPath, true);
-                Logger.Log($"[{DateTime.Now}]: {fileName} flyttades till {setting.Name}");
+                Logger.Log($"{fileName} {setting.Name}");
                 Console.WriteLine($"[{DateTime.Now}]: {fileName} flyttades till {setting.Name}");
                 return;
             }
@@ -50,4 +50,29 @@ public class FileMover
             }
         }
     }
+    
+    public async Task ExistingFiles(DirectorySetting setting)
+    {
+        if (!Directory.Exists(setting.Input))
+        {
+            Logger.Log($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Input-mapp finns inte: {setting.Input}");
+            return;
+        }
+
+        try
+        {
+            var files = Directory.GetFiles(setting.Input);
+            Logger.Log($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Kontrollerar {files.Length} befintliga filer");
+
+            foreach (var file in files)
+            {
+                await HandleFiles(file, setting);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Log($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: Fel vid uppstartsbearbetning: {ex.Message}");
+        }
+    }
 }
+
