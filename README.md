@@ -1,4 +1,10 @@
 # 🦆 Sortomatic 9000
+![C#](https://img.shields.io/badge/C%23-.NET-239120?logo=csharp&logoColor=white)
+![.NET](https://img.shields.io/badge/.NET-Desktop%20Application-512BD4?logo=dotnet&logoColor=white)
+![Config](https://img.shields.io/badge/Config-XML-blue)
+![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey)
+![Status](https://img.shields.io/badge/Status-Stable-brightgreen)
+
 Sortomatic 9000 är ett filsorteringsprogram som automatiskt övervakar dina mappar och flyttar filer till rätt plats utifrån regler i en inställningsfil (XML-format).
 Programmet är perfekt för att hålla ordning på t.ex. Hämtade filer-mappen utan att lyfta ett finger.
 
